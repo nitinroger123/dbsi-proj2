@@ -10,6 +10,13 @@ public class Subset {
 	private Double productOfSelectivities;
 	private ArrayList<BasicTerm> basicTerms;
 	
+	/**
+	 * Adds a basic term into the Subset
+	 * @param b
+	 */
+	public void addBasicTermToSubset(BasicTerm b){
+		this.basicTerms.add(b);
+	}
 	
 	public void setCost(Double cost) {
 		this.cost = cost;
@@ -53,7 +60,32 @@ public class Subset {
 	public Integer getSize() {
 		return size;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((basicTerms == null) ? 0 : basicTerms.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Subset other = (Subset) obj;
+		if (basicTerms == null) {
+			if (other.basicTerms != null)
+				return false;
+		} else if (!basicTerms.equals(other.basicTerms))
+			return false;
+		return true;
+	}
 	
 	
 
