@@ -17,6 +17,13 @@ public class Subset {
 	public void addBasicTermToSubset(BasicTerm b){
 		this.basicTerms.add(b);
 	}
+	/**
+	 * Creates a subset with one member
+	 * @param b
+	 */
+	public Subset(BasicTerm b){
+		this.basicTerms.add(b);
+	}
 	
 	public void setCost(Double cost) {
 		this.cost = cost;
