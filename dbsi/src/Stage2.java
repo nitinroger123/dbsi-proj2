@@ -25,8 +25,24 @@ public class Stage2 {
 		
 	}
 	/**
+	 * Helper method to generate the different & separated
+	 * subsets. Basically generates all the different permutations
+	 * @param list
+	 */
+	private void buildSubsets(ArrayList<BasicTerm> list){
+		/**
+		 * populate the subset initially with one basic term
+		 */
+		for(BasicTerm bt: list){
+			A.add(new Subset(bt));
+		}
+		
+	}
+	
+	/**
 	 * helper method to generate the 2^k -1 subsets of basic terms
-	 * This method will populate the field "A" which will contain the 
+	 * This method will call buildSubsets which will 
+	 * populate the field "A" which will contain the 
 	 * subsets.
 	 * @param selectivities
 	 */
@@ -42,12 +58,7 @@ public class Stage2 {
 			list.add(new BasicTerm("f"+append, d));
 			append++;
 		}
-		
-		for(BasicTerm b:list){
-			System.out.println(b.getName()+ " : "+b.getSelectivity());
-		}
-		
-		
+		buildSubsets(list);
 	}
 	/**
 	 * The actual dynamic programming algorithm which operates on a list of basic blocks
