@@ -22,7 +22,16 @@ public class Subset {
 	 * @param b
 	 */
 	public Subset(BasicTerm b){
+		basicTerms = new ArrayList<BasicTerm>();
 		this.basicTerms.add(b);
+	}
+	/**
+	 * Creates a subset with a list of basic terms
+	 * @param terms
+	 */
+	public Subset(ArrayList<BasicTerm> terms){
+		basicTerms = new ArrayList<BasicTerm>();
+		this.basicTerms.addAll(terms);
 	}
 	
 	public void setCost(Double cost) {
@@ -66,6 +75,15 @@ public class Subset {
 	}
 	public Integer getSize() {
 		return size;
+	}
+	
+	public boolean contains(BasicTerm b){
+		for(BasicTerm bt : basicTerms){
+			if(b.equals(bt)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
