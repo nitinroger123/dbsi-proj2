@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Subset implements Comparable<Subset>{
@@ -141,6 +142,31 @@ public class Subset implements Comparable<Subset>{
 			return 0;
 		}
 		return -1;
+	}
+	/**
+	 * returns true if the intersection is null
+	 * @param other
+	 * @return
+	 */
+	public boolean isIntersectionNull(Subset other){
+		HashMap<Integer,Integer> map = new HashMap<Integer, Integer>();
+		int j=0;
+		for(int i = this.getBitmap().length()-1;i>=0;i--){
+			if(this.getBitmap().charAt(i)=='1'){
+				map.put(j, j);
+			}
+			j++;
+		}
+		j=0;
+		for(int i = other.getBitmap().length()-1;i>=0;i--){
+			if(other.getBitmap().charAt(i)=='1'){
+				if(map.get(j)!=null){
+					return false;
+				}
+			}
+			j++;
+		}
+		return true;
 	}
 	
 	
