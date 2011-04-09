@@ -27,6 +27,8 @@ public class Stage2 {
 	//given a basic term get the integer. Ex f1 -> 1. Useful for quick set intersection
 	HashMap<BasicTerm, Integer> basicTermToIntegerMap = new HashMap<BasicTerm, Integer>();
 	
+	//given a bitmap returns the index corresponding to the bitmap in A
+	HashMap<String, Integer> indexInAForBitMap = new HashMap<String, Integer>();
 	public Stage2() throws FileNotFoundException, IOException{
 		config = new Properties();
 		config.load(new FileInputStream("config.properties"));
@@ -52,7 +54,13 @@ public class Stage2 {
 				}
 			}
 		}
+		indexInAForBitMap = new HashMap<String, Integer>();
 		Collections.sort(A);
+		int i=0;
+		for(Subset s : A){
+			indexInAForBitMap.put(s.getBitmap(),i );
+			i++;
+		}
 		
 	}
 	/**
@@ -101,9 +109,13 @@ public class Stage2 {
 		}
 		//System.out.println();
 		generateSubsets(selectivities);
+		System.out.println("Some test");
 		for(Subset s : A){
 			for(Subset sDash : A){
-				
+				if(s.isIntersectionNull(sDash)){
+					System.out.println(s.union(sDash));
+					System.out.println("Index of union is "+indexInAForBitMap.get(s.union(sDash)));
+				}
 			}
 		}
 		return null;
