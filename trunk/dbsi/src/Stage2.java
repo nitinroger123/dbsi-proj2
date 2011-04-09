@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -18,8 +19,8 @@ public class Stage2 {
 	Properties config;
 	//Field which represents the 2^k -1 subsets.
 	ArrayList<Subset> A;
-	HashMap<Integer, BasicTerm> basicTermMap = new HashMap<Integer, BasicTerm>();
-	
+	HashMap<Integer, BasicTerm> integerToBasicTermMap = new HashMap<Integer, BasicTerm>();
+	HashMap<BasicTerm, Integer> basicTermToIntegerMap = new HashMap<BasicTerm, Integer>();
 	public Stage2() throws FileNotFoundException, IOException{
 		config = new Properties();
 		config.load(new FileInputStream("config.properties"));
@@ -41,10 +42,11 @@ public class Stage2 {
 			String bitmap = s.getBitmap();
 			for(int i = bitmap.length()-1;i>=0;i--){
 				if(bitmap.charAt(i)=='1'){
-					s.addBasicTermToSubset(basicTermMap.get(bitmap.length()-i));
+					s.addBasicTermToSubset(integerToBasicTermMap.get(bitmap.length()-i));
 				}
 			}
 		}
+		Collections.sort(A);
 		
 	}
 	/**
@@ -56,7 +58,7 @@ public class Stage2 {
 	 */
 	private void generateSubsets(ArrayList<Double> selectivities){
 		Integer append = 1;
-		basicTermMap = new HashMap<Integer, BasicTerm>();
+		integerToBasicTermMap = new HashMap<Integer, BasicTerm>();
 		ArrayList<BasicTerm> list = new ArrayList<BasicTerm>();
 		/**
 		 * create a basic list of basic terms to help the creation
@@ -66,7 +68,8 @@ public class Stage2 {
 		for(Double d: selectivities){
 			BasicTerm basicTerm = new BasicTerm("f"+append, d);
 			list.add(basicTerm);
-			basicTermMap.put(append, basicTerm);
+			integerToBasicTermMap.put(append, basicTerm);
+			basicTermToIntegerMap.put(basicTerm, append);
 			append++;
 		}
 		for(BasicTerm b : list){

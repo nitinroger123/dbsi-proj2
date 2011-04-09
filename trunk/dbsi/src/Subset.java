@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 
-public class Subset {
+public class Subset implements Comparable<Subset>{
 	private Double cost;
 	private Boolean branch;
 	private Subset left;
@@ -121,6 +121,26 @@ public class Subset {
 	}
 	public String getBitmap() {
 		return bitmap;
+	}
+	
+	public int position(){
+		int sum = 0;
+		for(int i=0;i<bitmap.length();i++){
+			if(bitmap.charAt(i)=='1') {
+				sum++;
+			}
+		}
+		return sum;
+	}
+	@Override
+	public int compareTo(Subset x){
+		if(this.position() >= x.position()){
+			return 1;
+		}
+		if(this.position() == x.position()){
+			return 0;
+		}
+		return -1;
 	}
 	
 	
