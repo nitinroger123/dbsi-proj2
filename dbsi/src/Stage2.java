@@ -17,10 +17,16 @@ import java.util.Properties;
 public class Stage2 {
 	// The config file which will contain r,t,l,m .. etc values
 	Properties config;
+	
 	//Field which represents the 2^k -1 subsets.
 	ArrayList<Subset> A;
+	
+	//given an integer get the term. Ex 1 -> f1. Useful for quick set intersection
 	HashMap<Integer, BasicTerm> integerToBasicTermMap = new HashMap<Integer, BasicTerm>();
+	
+	//given a basic term get the integer. Ex f1 -> 1. Useful for quick set intersection
 	HashMap<BasicTerm, Integer> basicTermToIntegerMap = new HashMap<BasicTerm, Integer>();
+	
 	public Stage2() throws FileNotFoundException, IOException{
 		config = new Properties();
 		config.load(new FileInputStream("config.properties"));
@@ -28,7 +34,7 @@ public class Stage2 {
 		
 	}
 	/**
-	 * populate A with 2^k -1 subsets
+	 * populate A with 2^k -1 subsets using bitmaps!
 	 * @param list
 	 */
 	private void buildSubsets(ArrayList<BasicTerm> list){
@@ -95,6 +101,11 @@ public class Stage2 {
 		}
 		//System.out.println();
 		generateSubsets(selectivities);
+		for(Subset s : A){
+			for(Subset sDash : A){
+				
+			}
+		}
 		return null;
 	}
 	
