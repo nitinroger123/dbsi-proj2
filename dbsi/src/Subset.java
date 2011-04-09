@@ -9,7 +9,7 @@ public class Subset {
 	private Integer size;
 	private Double productOfSelectivities;
 	private ArrayList<BasicTerm> basicTerms;
-	
+	private String bitmap = new String();
 	/**
 	 * Adds a basic term into the Subset
 	 * @param b
@@ -24,6 +24,11 @@ public class Subset {
 	public Subset(BasicTerm b){
 		basicTerms = new ArrayList<BasicTerm>();
 		this.basicTerms.add(b);
+	}
+	
+	public Subset(String bitmap){
+		this.basicTerms = new ArrayList<BasicTerm>();
+		this.setBitmap(bitmap);
 	}
 	/**
 	 * Creates a subset with a list of basic terms
@@ -110,6 +115,12 @@ public class Subset {
 		} else if (!basicTerms.equals(other.basicTerms))
 			return false;
 		return true;
+	}
+	public void setBitmap(String bitmap) {
+		this.bitmap = bitmap;
+	}
+	public String getBitmap() {
+		return bitmap;
 	}
 	
 	
