@@ -168,6 +168,19 @@ public class Subset implements Comparable<Subset>{
 		}
 		return true;
 	}
+	/**
+	 * Given two subsets, returns the union of their bitmaps
+	 * so that the union can be located directly in A
+	 * @param other
+	 * @return
+	 */
+	public String union(Subset other){
+		Integer a = Integer.parseInt(this.getBitmap(),2);
+		Integer b = Integer.parseInt(other.getBitmap(),2);
+		Integer c = a | b;
+		String result = Integer.toBinaryString(c);
+		return result;
+	}
 	
 	
 
