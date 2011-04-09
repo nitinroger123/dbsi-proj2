@@ -18,6 +18,7 @@ public class Stage2 {
 	Properties config;
 	//Field which represents the 2^k -1 subsets.
 	ArrayList<Subset> A;
+	HashMap<Integer, BasicTerm> basicTermMap = new HashMap<Integer, BasicTerm>();
 	
 	public Stage2() throws FileNotFoundException, IOException{
 		config = new Properties();
@@ -25,62 +26,27 @@ public class Stage2 {
 		A = new ArrayList<Subset>();
 		
 	}
-	
-	private boolean contains(ArrayList<Subset> array , Subset s){
-		for(Subset subset : array){
-			HashMap<String,String> map = new HashMap<String, String>();
-			ArrayList<BasicTerm> basicTerms = subset.getBasicTerms();
-			if(basicTerms.size() == s.getBasicTerms().size()){
-				for(BasicTerm b: basicTerms){
-					map.put(b.getName(), "");
-				}
-				boolean flag = false;
-				for(BasicTerm b : s.getBasicTerms()){
-					if(!map.containsKey(b.getName())){
-						flag = false;
-					}
-					else{
-						flag = true;
-					}
-				}
-				if(flag) return true;
-			}
-		}
-		return false;
-	}
 	/**
-	 * Helper method to generate the different & separated
-	 * subsets. Basically generates all the different permutations
+	 * populate A with 2^k -1 subsets
 	 * @param list
 	 */
-	
 	private void buildSubsets(ArrayList<BasicTerm> list){
-		/**
-		 * populate the subset initially with one basic term
-		 */
-		boolean flag = true;
-		for(BasicTerm bt: list){
-			A.add(new Subset(bt));
+		int bit =1;
+		for(int i=0;i<Math.pow(2.0,list.size())-1;i++){
+			String bitmap = Integer.toBinaryString(bit);
+			A.add(new Subset(bitmap));
+			bit++;
 		}
-		while(flag){
-			for(BasicTerm bt: list){
-				ArrayList<Subset> copy =(ArrayList<Subset>) A.clone();
-				for(Subset s: copy){
-						ArrayList<BasicTerm> temp = new ArrayList<BasicTerm>(s.getBasicTerms());
-						if(!s.contains(bt)){
-							temp.add(bt);
-							if(!contains(A,new Subset(temp))){
-								A.add(new Subset(temp));
-							}	
-						}
-						if(temp.size()>= list.size()){
-							flag=false;
-						}
+		for(Subset s:A){
+			String bitmap = s.getBitmap();
+			for(int i = bitmap.length()-1;i>=0;i--){
+				if(bitmap.charAt(i)=='1'){
+					s.addBasicTermToSubset(basicTermMap.get(bitmap.length()-i));
 				}
 			}
 		}
+		
 	}
-	
 	/**
 	 * helper method to generate the 2^k -1 subsets of basic terms
 	 * This method will call buildSubsets which will 
@@ -90,6 +56,7 @@ public class Stage2 {
 	 */
 	private void generateSubsets(ArrayList<Double> selectivities){
 		Integer append = 1;
+		basicTermMap = new HashMap<Integer, BasicTerm>();
 		ArrayList<BasicTerm> list = new ArrayList<BasicTerm>();
 		/**
 		 * create a basic list of basic terms to help the creation
@@ -97,7 +64,9 @@ public class Stage2 {
 		 * selectivity.
 		 */
 		for(Double d: selectivities){
-			list.add(new BasicTerm("f"+append, d));
+			BasicTerm basicTerm = new BasicTerm("f"+append, d);
+			list.add(basicTerm);
+			basicTermMap.put(append, basicTerm);
 			append++;
 		}
 		for(BasicTerm b : list){
