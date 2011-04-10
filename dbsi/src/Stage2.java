@@ -35,6 +35,9 @@ public class Stage2 {
 		A = new ArrayList<Subset>();
 		
 	}
+	public Stage2(String s){
+		
+	}
 	/**
 	 * populate A with 2^k -1 subsets using bitmaps!
 	 * @param list
@@ -42,6 +45,7 @@ public class Stage2 {
 	 * @throws FileNotFoundException 
 	 */
 	private void buildSubsets(ArrayList<BasicTerm> list) throws FileNotFoundException, IOException{
+		A = new ArrayList<Subset>();
 		int bit =1;
 		for(int i=0;i<Math.pow(2.0,list.size())-1;i++){
 			String bitmap = Integer.toBinaryString(bit);
@@ -56,6 +60,10 @@ public class Stage2 {
 				}
 			}
 		}
+		
+		/**
+		 * this part is the end of part (1) of algo 4.11
+		 */
 		indexInAForBitMap = new HashMap<String, Integer>();
 		Collections.sort(A);
 		int i=0;
@@ -95,14 +103,6 @@ public class Stage2 {
 			//System.out.println(b.getName() + " : "+b.getSelectivity());
 		}
 		buildSubsets(list);
-		System.out.println("Subsets are");
-		for(Subset s: A){
-			System.out.println("Cost is "+s.getCost()+ " No branch used? "+s.getBranch().toString());
-			for(BasicTerm b : s.getBasicTerms()){
-				System.out.print(b.getName()+ "&");
-			}
-			System.out.println();
-		}
 	}
 	/**
 	 * The actual dynamic programming algorithm which operates on a list of basic blocks
@@ -111,22 +111,39 @@ public class Stage2 {
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
-	public String dpOptimization(ArrayList<Double> selectivities) throws FileNotFoundException, IOException{
-		for(Double d: selectivities){
-			//System.out.print(d+ " ");
-		}
-		//System.out.println();
+	public String dpOptimization(ArrayList<Double> selectivities) throws FileNotFoundException, IOException{	
 		generateSubsets(selectivities);
-		System.out.println("Some test");
+		/**
+		 * start of 4.11 part (2)
+		 */
 		for(Subset s : A){
 			for(Subset sDash : A){
 				if(s.isIntersectionNull(sDash)){
-					System.out.println(s.union(sDash));
-					System.out.println("Index of union is "+indexInAForBitMap.get(s.union(sDash)));
+					Subset leftMost = s;
+					while(leftMost.getLeft() != null){
+						leftMost = s.getLeft();
+					}
+					//cmetric check					
+					Double sDashp = sDash.getProductOfSelectivities();
+					Double sp = leftMost.getProductOfSelectivities();
+					if(sDashp > sp && (sDashp-1)/sDash.getFcost() > (sp-1)/leftMost.getFcost()){
+						continue;
+					}					
+					//dmetric check
+					if(sDash.getProductOfSelectivities()<= 0.5 && sDash.getFcost() > s.getFcost()
+							&& sDash.getProductOfSelectivities() > s.getProductOfSelectivities()){
+						continue;
+					}					
+					//else we will do the union
+					if(A.get(indexInAForBitMap.get(s.union(sDash))).getCost() > sDash.combinedCost(s)){						
+						A.get(indexInAForBitMap.get(s.union(sDash))).setCost(sDash.combinedCost(s));
+						A.get(indexInAForBitMap.get(s.union(sDash))).setLeft(sDash);
+						A.get(indexInAForBitMap.get(s.union(sDash))).setRight(s);
+					}
 				}
 			}
 		}
-		return null;
+		return A.get(A.size()-1).getCost().toString();
 	}
 	
 	/**
@@ -145,7 +162,7 @@ public class Stage2 {
 			for(int i=0;i<s.length;i++){
 				selectivity.add(Double.parseDouble(s[i]));
 			}
-			stage2.dpOptimization(selectivity);
+			System.out.println("Overall Cost is: "+stage2.dpOptimization(selectivity));
 		}
 	}
 	
