@@ -38,8 +38,10 @@ public class Stage2 {
 	/**
 	 * populate A with 2^k -1 subsets using bitmaps!
 	 * @param list
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	private void buildSubsets(ArrayList<BasicTerm> list){
+	private void buildSubsets(ArrayList<BasicTerm> list) throws FileNotFoundException, IOException{
 		int bit =1;
 		for(int i=0;i<Math.pow(2.0,list.size())-1;i++){
 			String bitmap = Integer.toBinaryString(bit);
@@ -58,6 +60,7 @@ public class Stage2 {
 		Collections.sort(A);
 		int i=0;
 		for(Subset s : A){
+			s.setInitialCostForANDTerms();
 			indexInAForBitMap.put(s.getBitmap(),i );
 			i++;
 		}
@@ -69,8 +72,10 @@ public class Stage2 {
 	 * populate the field "A" which will contain the 
 	 * subsets.
 	 * @param selectivities
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	private void generateSubsets(ArrayList<Double> selectivities){
+	private void generateSubsets(ArrayList<Double> selectivities) throws FileNotFoundException, IOException{
 		Integer append = 1;
 		integerToBasicTermMap = new HashMap<Integer, BasicTerm>();
 		ArrayList<BasicTerm> list = new ArrayList<BasicTerm>();
@@ -92,6 +97,7 @@ public class Stage2 {
 		buildSubsets(list);
 		System.out.println("Subsets are");
 		for(Subset s: A){
+			System.out.println("Cost is "+s.getCost()+ " No branch used? "+s.getBranch().toString());
 			for(BasicTerm b : s.getBasicTerms()){
 				System.out.print(b.getName()+ "&");
 			}
@@ -102,8 +108,10 @@ public class Stage2 {
 	 * The actual dynamic programming algorithm which operates on a list of basic blocks
 	 * @param selectivities
 	 * @return
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public String dpOptimization(ArrayList<Double> selectivities){
+	public String dpOptimization(ArrayList<Double> selectivities) throws FileNotFoundException, IOException{
 		for(Double d: selectivities){
 			//System.out.print(d+ " ");
 		}
