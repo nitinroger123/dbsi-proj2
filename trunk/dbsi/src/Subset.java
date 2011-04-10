@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import javax.swing.text.html.MinimalHTMLWriter;
+
 
 public class Subset implements Comparable<Subset>{
 	private Double cost;
@@ -14,12 +16,18 @@ public class Subset implements Comparable<Subset>{
 	private Double productOfSelectivities;
 	private ArrayList<BasicTerm> basicTerms;
 	private String bitmap = new String();
+	private Double fcost;
+	private Stage2 stage2;
 	/**
 	 * Adds a basic term into the Subset
 	 * @param b
 	 */
 	public void addBasicTermToSubset(BasicTerm b){
 		this.basicTerms.add(b);
+	}
+	
+	public Double getFcost(){
+		return fcost;
 	}
 	/**
 	 * Creates a subset with one member
@@ -196,7 +204,9 @@ public class Subset implements Comparable<Subset>{
 	public void setInitialCostForANDTerms() throws FileNotFoundException, IOException{
 		Double noBranchCost = 0.0;
 		Double logicalAndCost = 0.0;
-		Properties config = new Stage2().config;
+		Double fcost = 0.0;
+		stage2 = new Stage2();
+		Properties config = stage2.config;
 		Double r = Double.parseDouble(config.getProperty("r"));
 		Double l = Double.parseDouble(config.getProperty("l"));
 		Double f = Double.parseDouble(config.getProperty("f"));
@@ -205,6 +215,9 @@ public class Subset implements Comparable<Subset>{
 		Double m = Double.parseDouble(config.getProperty("m"));
 		Integer k = this.getSize();
 		
+		//Calculate fcost
+		fcost = k*r + (k-1)*l + k*f + t;
+		this.fcost = fcost;
 		// Calculate value of q
 		Double prodOfSelectivities = this.getProductOfSelectivities();
 		Double q = 0.0;
@@ -224,6 +237,16 @@ public class Subset implements Comparable<Subset>{
 			this.cost = noBranchCost;
 			this.branch = true;
 		}
+	}
+	
+	public Double combinedCost(Subset other) throws FileNotFoundException, IOException{
+		Properties config = stage2.config;
+		Double m = Double.parseDouble(config.getProperty("m"));
+		Double combinedCost = 0.0;
+		Double prodOfSelectivities = this.getProductOfSelectivities();
+		Double q = Math.min(prodOfSelectivities, 1-prodOfSelectivities);
+		combinedCost = this.fcost +m*q + prodOfSelectivities*other.getCost();
+		return combinedCost;
 	}
 	
 	

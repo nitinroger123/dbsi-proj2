@@ -2,7 +2,6 @@
 public class BasicTerm {
 	private Double selectivity;
 	private String name;
-	
 	public BasicTerm(String name , Double selectivity){
 		this.name = name;
 		this.selectivity = selectivity;
