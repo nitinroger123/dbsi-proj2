@@ -1,5 +1,8 @@
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 
 public class Subset implements Comparable<Subset>{
@@ -67,8 +70,18 @@ public class Subset implements Comparable<Subset>{
 	public void setProductOfSelectivities(Double productOfSelectivities) {
 		this.productOfSelectivities = productOfSelectivities;
 	}
+	
+	/**
+	 * go through the basic terms, multiply selectivity and return
+	 * @return
+	 */
+	
 	public Double getProductOfSelectivities() {
-		return productOfSelectivities;
+		Double result = 1.0;
+		for(BasicTerm b: this.basicTerms){
+			result*=b.getSelectivity();
+		}
+		return result;
 	}
 	public void setBasicTerms(ArrayList<BasicTerm> basicTerms) {
 		this.basicTerms = basicTerms;
@@ -76,11 +89,9 @@ public class Subset implements Comparable<Subset>{
 	public ArrayList<BasicTerm> getBasicTerms() {
 		return basicTerms;
 	}
-	public void setSize(Integer size) {
-		this.size = size;
-	}
+	
 	public Integer getSize() {
-		return size;
+		return basicTerms.size();
 	}
 	
 	public boolean contains(BasicTerm b){
@@ -180,6 +191,39 @@ public class Subset implements Comparable<Subset>{
 		Integer c = a | b;
 		String result = Integer.toBinaryString(c);
 		return result;
+	}
+	
+	public void setInitialCostForANDTerms() throws FileNotFoundException, IOException{
+		Double noBranchCost = 0.0;
+		Double logicalAndCost = 0.0;
+		Properties config = new Stage2().config;
+		Double r = Double.parseDouble(config.getProperty("r"));
+		Double l = Double.parseDouble(config.getProperty("l"));
+		Double f = Double.parseDouble(config.getProperty("f"));
+		Double a = Double.parseDouble(config.getProperty("a"));
+		Double t = Double.parseDouble(config.getProperty("t"));
+		Double m = Double.parseDouble(config.getProperty("m"));
+		Integer k = this.getSize();
+		
+		// Calculate value of q
+		Double prodOfSelectivities = this.getProductOfSelectivities();
+		Double q = 0.0;
+		if(prodOfSelectivities <= 0.5 ) q=prodOfSelectivities;
+		else q = 1.0 - prodOfSelectivities;
+		
+		//Example 4.4 in the paper
+		noBranchCost = k*r+ (k-1)*l + k*f + a;
+		
+		//Example 4.5
+		logicalAndCost = k*r + (k-1)*l + k*f + t + m*q + prodOfSelectivities*a; 
+		if(logicalAndCost <= noBranchCost){
+			this.cost = logicalAndCost;
+			this.branch = false;
+		}
+		else{
+			this.cost = noBranchCost;
+			this.branch = true;
+		}
 	}
 	
 	
