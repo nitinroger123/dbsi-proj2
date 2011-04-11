@@ -93,7 +93,7 @@ public class Stage2 {
 		 * selectivity.
 		 */
 		for(Double d: selectivities){
-			BasicTerm basicTerm = new BasicTerm("f"+append, d);
+			BasicTerm basicTerm = new BasicTerm("t"+append+"[o"+append+"[i]]", d);
 			list.add(basicTerm);
 			integerToBasicTermMap.put(append, basicTerm);
 			basicTermToIntegerMap.put(basicTerm, append);
@@ -140,17 +140,54 @@ public class Stage2 {
 				}
 			}
 		}
-		System.out.println(spitOutPlan(A.get(A.size()-1),""));
+		String noBranchTerm = "";
+		Subset s = A.get(A.size()-1);
+		while(s.getRight()!=null){
+			s= s.getRight();
+		}
+		if(s.getBranch()){
+			noBranchTerm = s.getAndTerms();
+			s.isLast = true;
+			//System.out.println("Last term is "+noBranchTerm);
+		}
+		String outerPlan = spitOutPlan(A.get(A.size()-1),"");
+		//System.out.println(outerPlan);
+		System.out.println(prettyPrint(outerPlan , noBranchTerm));
 		return A.get(A.size()-1).getCost().toString();
 	}
 	
+	private String prettyPrint(String outerPlan, String noBranchTerm) {
+		String answer = "";
+		if(outerPlan.length()>0){
+			answer = answer + "if("+outerPlan+") {\n\t";
+			answer = answer + "answer[j]=i;\n\t";
+			answer = answer + "j+=("+noBranchTerm+");\n";
+			answer = answer + "}";
+		}
+		else{
+			answer = answer + "answer[j]=i;\n";
+			answer = answer + "j+=("+noBranchTerm+");\n";
+		}
+		return answer;
+	}
+	/**
+	 * Recursive method to compute the plan
+	 * @param s
+	 * @param str
+	 * @return
+	 */
 	private String spitOutPlan(Subset s,String str) {
+		if(s.isLast) return "";
 		if(s.getLeft() == null ){
 			str+=s.getAndTerms();
 			return "("+str+")";
 		}
 		else{
-			return "("+s.getLeft().getAndTerms()+" && "+spitOutPlan(s.getRight(),str)+")";
+			if(!s.getRight().isLast)
+				return "("+s.getLeft().getAndTerms()+" && "+spitOutPlan(s.getRight(),str)+")";
+			else{
+				return s.getLeft().getAndTerms();
+			}
 		}
 	}
 	/**

@@ -18,6 +18,7 @@ public class Subset implements Comparable<Subset>{
 	private String bitmap = new String();
 	private Double fcost;
 	private Stage2 stage2;
+	Boolean isLast = false;
 	/**
 	 * Adds a basic term into the Subset
 	 * @param b
