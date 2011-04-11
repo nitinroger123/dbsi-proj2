@@ -239,6 +239,13 @@ public class Subset implements Comparable<Subset>{
 		}
 	}
 	
+	/**
+	 * the cost of sdash union s given by Eq(1)
+	 * @param other
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public Double combinedCost(Subset other) throws FileNotFoundException, IOException{
 		Properties config = stage2.config;
 		Double m = Double.parseDouble(config.getProperty("m"));
@@ -249,6 +256,21 @@ public class Subset implements Comparable<Subset>{
 		return combinedCost;
 	}
 	
+	public String toString(){
+		String s="";
+		for(BasicTerm b: basicTerms){
+			s=s+b.getName();
+		}
+		return s;
+	}
 	
-
+	public String getAndTerms(){
+		String s="";
+		for(int i=0;i<this.basicTerms.size()-1;i++){
+			s=s+this.basicTerms.get(i).getName();
+			s=s+"&";
+		}
+		s+=this.basicTerms.get(this.basicTerms.size()-1).getName();
+		return s;
+	}
 }
