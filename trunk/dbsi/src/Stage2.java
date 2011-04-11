@@ -99,9 +99,6 @@ public class Stage2 {
 			basicTermToIntegerMap.put(basicTerm, append);
 			append++;
 		}
-		for(BasicTerm b : list){
-			//System.out.println(b.getName() + " : "+b.getSelectivity());
-		}
 		buildSubsets(list);
 	}
 	/**
@@ -128,12 +125,12 @@ public class Stage2 {
 					Double sp = leftMost.getProductOfSelectivities();
 					if(sDashp > sp && (sDashp-1)/sDash.getFcost() > (sp-1)/leftMost.getFcost()){
 						continue;
-					}					
+					}
 					//dmetric check
 					if(sDash.getProductOfSelectivities()<= 0.5 && sDash.getFcost() > s.getFcost()
 							&& sDash.getProductOfSelectivities() > s.getProductOfSelectivities()){
 						continue;
-					}					
+					}
 					//else we will do the union
 					if(A.get(indexInAForBitMap.get(s.union(sDash))).getCost() > sDash.combinedCost(s)){						
 						A.get(indexInAForBitMap.get(s.union(sDash))).setCost(sDash.combinedCost(s));
@@ -143,9 +140,19 @@ public class Stage2 {
 				}
 			}
 		}
+		System.out.println(spitOutPlan(A.get(A.size()-1),""));
 		return A.get(A.size()-1).getCost().toString();
 	}
 	
+	private String spitOutPlan(Subset s,String str) {
+		if(s.getLeft() == null ){
+			str+=s.getAndTerms();
+			return "("+str+")";
+		}
+		else{
+			return "("+s.getLeft().getAndTerms()+" && "+spitOutPlan(s.getRight(),str)+")";
+		}
+	}
 	/**
 	 * Reads the query file and calls the optimizer
 	 * @param stage2
